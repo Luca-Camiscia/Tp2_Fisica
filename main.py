@@ -1,7 +1,7 @@
 from Procesar import process,graph
 
 def main():
-    res = process("Data\Datos_5939.txt")
+    res = process(5939)
 
     graph(res,"ALL")
 
