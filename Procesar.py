@@ -1,11 +1,42 @@
 import json
+import numpy as np
 
 def infoGet(id: str):
     with open("Data/datos_oscilacion.json", "r") as f:
         data = json.load(f)
     return data.get(id)
 
+def GetFrecuencia(Datos: dict):
+    """
+    Calcula la frecuencia del péndulo a partir de los datos de 'theta' y 'T'.
+    Utiliza los cruces por -90 grados para estimar el período y la frecuencia.
+    """
 
+    theta = np.array(Datos["theta"])
+    T = np.array(Datos["T"])
+
+    # Buscar los índices donde theta cruza por -90 (cambio de signo respecto a -90)
+    cruces = np.where(np.diff(np.sign(theta + 90)))[0]
+
+    # Necesitamos al menos dos cruces para calcular un período
+    if len(cruces) < 2:
+        print("No se detectaron suficientes cruces por -90 para calcular la frecuencia.")
+        return None
+
+    # Calcular los tiempos de cruce por -90
+    tiempos_cruce = T[cruces]
+
+    # Calcular los períodos entre cruces alternos (un ciclo completo)
+    periodos = np.diff(tiempos_cruce[::2])
+
+    if len(periodos) == 0:
+        print("No se detectaron períodos completos.")
+        return None
+
+    periodo_medio = np.mean(periodos)
+    frecuencia = 1 / periodo_medio
+
+    return frecuencia
 
 def process(id: str):
     path = "Data/Datos_" + str(id) + ".txt"
@@ -16,7 +47,6 @@ def process(id: str):
         # Voy a usar los t como clave
         Datos = {"T": [], "X": [], "Y": [], "theta": [],"Peso":0,"Largo":0,"Osilacion":""}  # Leer línea por línea
         datos_json = infoGet(str(id))
-        print(datos_json)
         Datos["Peso"] = datos_json["Peso"]
         Datos["Largo"] = datos_json["Largo"]
         Datos["Osilacion"] = datos_json["Oscilacion"]
