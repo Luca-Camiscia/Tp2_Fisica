@@ -5,20 +5,20 @@ import math
 import matplotlib.pyplot as plt
 def Plot_frecuencias():
     """
-    Grafica las frecuencias de las 15 grabaciones como un scatter plot, coloreando según el valor de infoGet()["Oscilacion"].
-    En las etiquetas del eje x muestra el ID y el largo en cm.
+    Grafica las frecuencias de las 15 grabaciones como un scatter plot, usando la longitud (Largo) en el eje x.
+    Colorea según el valor de infoGet()["Oscilacion"].
     """
     # IDs de los videos a procesar
     lista_videos = [5924, 5925, 5926, 5933, 5934, 5936, 5939, 5940, 5941, 5942, 5943, 5944, 5946, 5947, 5948]
     lista_videos.reverse()
-    color_map = {"chica": "blue", "mediana": "orange", "grande": "green"}
+    color_map = {"chica": "#AED6F1", "mediana": "#5DADE2", "grande": "#21618C"}
 
     frecuencias = []
     colores = []
+    longitudes = []
     etiquetas = []
 
     for video_id in lista_videos:
-        print(video_id)
         datos = process(str(video_id))
         frecuencia = GetFrecuencia(datos)
         info = infoGet(str(video_id))
@@ -28,31 +28,76 @@ def Plot_frecuencias():
 
         frecuencias.append(frecuencia)
         colores.append(color)
-        etiquetas.append(f"{video_id}\n{largo}cm")
+        longitudes.append(largo)
+        etiquetas.append(f"{video_id}")
 
-    fig, ax = plt.subplots(figsize=(12, 6))
-    ax.scatter(range(len(lista_videos)), frecuencias, color=colores, s=80)
+    fig, ax = plt.subplots(figsize=(10, 6))
+    ax.scatter(longitudes, frecuencias, color=colores, s=80)
 
-    ax.set_xticks(range(len(lista_videos)))
-    ax.set_xticklabels(etiquetas, rotation=45, ha='right')
+    ax.set_xticks(sorted(set(longitudes)))
+    ax.set_xticklabels(sorted(set(longitudes)))
     ax.set_ylabel("Frecuencia (Hz)")
-    ax.set_xlabel("Video ID y Largo (cm)")
-    ax.set_title("Frecuencias de las 15 grabaciones con masa de 6g")
+    ax.set_xlabel("Longitud (cm)")
+    ax.set_title("Frecuencias vs Longitud de las 15 grabaciones (masa 6g)")
 
     # Leyenda personalizada
     legend_elements = [
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='blue', markersize=10, label='Chica'),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='orange', markersize=10, label='Mediana'),
-        Line2D([0], [0], marker='o', color='w', markerfacecolor='green', markersize=10, label='Grande')
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["chica"], markersize=10, label='Chica'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["mediana"], markersize=10, label='Mediana'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["grande"], markersize=10, label='Grande')
     ]
     ax.legend(handles=legend_elements, title="Oscilación")
 
     plt.tight_layout()
     plt.show()
 
-def Plot_F_vs_M():
-    
-    lista_videos = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926]
+def Plot_frecuencia_vs_M():
+    """
+    Grafica la frecuencia en función de la masa para L = 35 cm.
+    El eje x es la masa (g), el eje y la frecuencia (Hz), y el color depende de la oscilación.
+    """
+    # IDs de videos con L = 35 cm
+    Masas = [5924, 5925, 5926, 5921, 5922, 5923, 5917, 5918, 5920]
+    color_map = {"chica": "#AED6F1", "mediana": "#5DADE2", "grande": "#21618C"}
+
+    masas_x = []
+    frecuencias_y = []
+    colores = []
+
+    for vid in Masas:
+        datos = process(str(vid))
+        frecuencia = GetFrecuencia(datos)
+        info = infoGet(str(vid))
+        masa = info.get("Masa", info.get("Peso", None))
+        oscilacion = info.get("Oscilacion", "chica")
+        color = color_map.get(oscilacion, "gray")
+
+        masas_x.append(masa)
+        frecuencias_y.append(frecuencia)
+        colores.append(color)
+
+    fig, ax = plt.subplots(figsize=(8, 5))
+    ax.scatter(masas_x, frecuencias_y, color=colores, s=80)
+
+    ax.set_xlabel("Masa (g)")
+    ax.set_ylabel("Frecuencia (Hz)")
+    ax.set_title("Frecuencia vs Masa para L = 35 cm")
+
+    # Leyenda personalizada
+    legend_elements = [
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["chica"], markersize=10, label='Chica'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["mediana"], markersize=10, label='Mediana'),
+        Line2D([0], [0], marker='o', color='w', markerfacecolor=color_map["grande"], markersize=10, label='Grande')
+    ]
+    ax.legend(handles=legend_elements, title="Oscilación")
+
+    plt.tight_layout()
+    plt.show()
+
+
+
+
+
 
 import matplotlib.pyplot as plt
 import numpy as np
@@ -62,7 +107,7 @@ import math
 # Colores fijos por tipo de oscilación
 COLOR_MAP = {"chica": "green", "mediana": "orange", "grande": "blue"}
 
-def graficar_comparativo_ordenado(lista_ids):
+def Plot_comparativo_ordenado(lista_ids):
     grupos = defaultdict(dict)  # (peso, largo) -> oscilacion -> Datos
 
     for vid in lista_ids:
@@ -114,9 +159,11 @@ def graficar_comparativo_ordenado(lista_ids):
 
 def main():
     lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
-    graficar_comparativo_ordenado(lista)
-    #Plot_frecuencias()
-
+    #graficar_comparativo_ordenado(lista)
+    Plot_frecuencias()
+    Plot_frecuencia_vs_M()
+    Plot_comparativo_ordenado()
+    
 #     res = process(5939)
 
 #     graph(res,"ALL")
