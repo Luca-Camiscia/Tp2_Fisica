@@ -1,6 +1,7 @@
 from Procesar import process,graph, GetFrecuencia, infoGet
 from matplotlib.lines import Line2D
-
+import numpy as np
+import math
 import matplotlib.pyplot as plt
 def Plot_frecuencias():
     """
@@ -51,12 +52,69 @@ def Plot_frecuencias():
 def Plot_F_vs_M():
     
     lista_videos = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926]
-    
 
+import matplotlib.pyplot as plt
+import numpy as np
+from collections import defaultdict
+import math
+
+# Colores fijos por tipo de oscilación
+COLOR_MAP = {"chica": "green", "mediana": "orange", "grande": "blue"}
+
+def graficar_comparativo_ordenado(lista_ids):
+    grupos = defaultdict(dict)  # (peso, largo) -> oscilacion -> Datos
+
+    for vid in lista_ids:
+        datos = process(vid)
+        key = (datos["Peso"], datos["Largo"])
+        oscilacion = datos["Osilacion"].lower()
+        grupos[key][oscilacion] = datos
+
+    claves = sorted(grupos.keys())
+    n = len(claves)
+    columnas = 3
+    filas = math.ceil(n / columnas)
+
+    fig, axs = plt.subplots(filas, columnas, figsize=(4.5 * columnas, 3 * filas), sharex=True, sharey=True)
+
+    if filas == 1:
+        axs = [axs]
+    if columnas == 1:
+        axs = [[ax] for ax in axs]
+    axs = np.array(axs)
+
+    for i, (key, subdatos) in enumerate(grupos.items()):
+        fila = i // columnas
+        col = i % columnas
+        ax = axs[fila, col]
+
+        for osc in ["chica", "mediana", "grande"]:
+            if osc in subdatos:
+                d = subdatos[osc]
+                theta0 = round(d["theta"][0], 2)
+                ax.plot(d["T"], d["theta"], label=f"θ₀ = {theta0} rad")
+
+        peso, largo = key
+        ax.set_title(f"Peso: {peso}g, Largo: {largo}cm", fontsize=10)
+        ax.set_xlabel("t [s]")
+        ax.set_ylabel("θ [rad]")
+        ax.set_xticks(np.arange(0, 8, 1))  # eje x de 0 a 7 s
+        ax.grid(True)
+        ax.legend(fontsize=8)
+
+    # Eliminar subplots vacíos
+    for j in range(i + 1, filas * columnas):
+        fig.delaxes(axs[j // columnas, j % columnas])
+
+    plt.tight_layout()
+    plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=14, y=1.02)
+    plt.show()
 
 
 def main():
-    Plot_frecuencias()
+    lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
+    graficar_comparativo_ordenado(lista)
+    #Plot_frecuencias()
 
 #     res = process(5939)
 

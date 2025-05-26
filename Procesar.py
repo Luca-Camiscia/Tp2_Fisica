@@ -57,7 +57,10 @@ def process(id: str):
             Datos["T"].append(float(curr[0].replace(',', '.')))
             Datos["X"].append(float(curr[1].replace(',', '.')))
             Datos["Y"].append(float(curr[2].replace(',', '.')))
-            Datos["theta"].append(float(curr[3].replace(',', '.')))
+
+             # ⚠️ Sumamos 90 grados a theta
+            angulo_original = float(curr[3].replace(',', '.'))
+            Datos["theta"].append(angulo_original + 90)
 
         return Datos
 
