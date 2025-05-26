@@ -9,21 +9,24 @@ def infoGet(id: str):
 def GetFrecuencia(Datos: dict):
     """
     Calcula la frecuencia del péndulo a partir de los datos de 'theta' y 'T'.
-    Utiliza los cruces por -90 grados para estimar el período y la frecuencia.
+    Utiliza los cruces por el valor inicial de theta para estimar el período y la frecuencia.
     """
 
     theta = np.array(Datos["theta"])
     T = np.array(Datos["T"])
 
-    # Buscar los índices donde theta cruza por -90 (cambio de signo respecto a -90)
-    cruces = np.where(np.diff(np.sign(theta + 90)))[0]
+    # Valor inicial de theta
+    theta0 = theta[0]
+
+    # Buscar los índices donde theta cruza por theta0 (cambio de signo respecto a theta0)
+    cruces = np.where(np.diff(np.sign(theta - theta0)))[0]
 
     # Necesitamos al menos dos cruces para calcular un período
     if len(cruces) < 2:
-        print("No se detectaron suficientes cruces por -90 para calcular la frecuencia.")
+        print("No se detectaron suficientes cruces por el valor inicial para calcular la frecuencia.")
         return None
 
-    # Calcular los tiempos de cruce por -90
+    # Calcular los tiempos de cruce por theta0
     tiempos_cruce = T[cruces]
 
     # Calcular los períodos entre cruces alternos (un ciclo completo)
@@ -39,6 +42,24 @@ def GetFrecuencia(Datos: dict):
     return frecuencia
 
 def process(id: str):
+    """
+    Procesa un archivo de datos experimentales y retorna un diccionario con la información extraída.
+    Args:
+        id (str): Identificador del archivo de datos a procesar. El archivo debe estar en la ruta "Data/Datos_<id>.txt".
+    Returns:
+        dict: Un diccionario con las siguientes claves:
+            - "T": Lista de tiempos (float).
+            - "X": Lista de posiciones X (float).
+            - "Y": Lista de posiciones Y (float).
+            - "theta": Lista de ángulos theta (float).
+            - "Peso": Peso extraído de la función infoGet (float/int).
+            - "Largo": Largo extraído de la función infoGet (float/int).
+            - "Osilacion": Tipo de oscilación extraído de la función infoGet (str).
+    Notas:
+        - El archivo de datos debe tener al menos 3 líneas de encabezado, que serán ignoradas.
+        - Los valores numéricos pueden estar separados por comas o puntos decimales.
+        - La función infoGet debe estar definida y retornar un diccionario con las claves "Peso", "Largo" y "Oscilacion".
+    """
     path = "Data/Datos_" + str(id) + ".txt"
     with open(path, "r") as file:
         # Saltar las primeras 3 líneas

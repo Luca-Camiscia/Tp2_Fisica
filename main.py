@@ -10,6 +10,7 @@ def Plot_frecuencias():
     """
     # IDs de los videos a procesar
     lista_videos = [5924, 5925, 5926, 5933, 5934, 5936, 5939, 5940, 5941, 5942, 5943, 5944, 5946, 5947, 5948]
+    lista_videos.reverse()
     color_map = {"chica": "blue", "mediana": "orange", "grande": "green"}
 
     frecuencias = []
