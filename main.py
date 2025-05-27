@@ -156,13 +156,55 @@ def Plot_comparativo_ordenado(lista_ids):
     plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=14, y=1.02)
     plt.show()
 
+def Plot_theta_vs_t_con_armonica():
+    """
+    Compara θ(t) medido con la solución armónica ideal A cos(√(g/L) t + φ), 
+    para amplitud chica y grande, en condiciones de masa y largo fijos.
+    """
+    import matplotlib.pyplot as plt
+    import numpy as np
+
+    ids = {"chica": 5932, "grande": 5930} #ESTO HAY QUE REVISAR QUE SEA EL MÄS MÄS CHICO Y EL MÄS MÄS GRANDE
+    g = 9.81  # m/s²
+
+    for tipo, vid in ids.items():
+        datos = process(str(vid))
+        T = np.array(datos["T"])
+        theta = np.array(datos["theta"])
+        A = theta[0]
+        A_deg = np.rad2deg(A)
+        L_cm = datos["Largo"]
+        L = L_cm / 100  # convertir a metros
+        omega_teorica = np.sqrt(g / L)
+
+        # Estimación de fase
+        t0 = T[0]
+        phi = np.arccos(theta[0] / A) - omega_teorica * t0
+
+        # Solución armónica ideal
+        theta_armonica = A * np.cos(omega_teorica * T + phi)
+
+        plt.figure(figsize=(8, 4))
+        plt.plot(T, theta, '-', color='blue', label=r"$\theta$ real")
+        plt.plot(T, theta_armonica, '--', color='orange', label=r"$\theta$ armónica (pequeñas oscilaciones)")
+        plt.xlabel("t [s]")
+        plt.ylabel(r"$\theta$ [rad]")
+        plt.title(f"Comparación entre solución exacta y armónica\nAmplitud inicial: {A_deg:.1f}°") #DAN RARO LOS ANGULOS
+        plt.legend()
+        plt.grid(True)
+        plt.tight_layout()
+        plt.show()
+
+
 
 def main():
     lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
     #graficar_comparativo_ordenado(lista)
-    Plot_frecuencias()
-    Plot_frecuencia_vs_M()
-    Plot_comparativo_ordenado()
+    #Plot_frecuencias()
+    #Plot_frecuencia_vs_M()
+    #Plot_comparativo_ordenado()
+    Plot_theta_vs_t_con_armonica()
+
     
 #     res = process(5939)
 
