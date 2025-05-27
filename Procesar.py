@@ -8,6 +8,7 @@ def infoGet(id: str):
 
 from scipy.signal import find_peaks
 import numpy as np
+from scipy.signal import argrelextrema
 
 def estimar_periodo(t, theta):
     # Buscar máximos locales
@@ -27,32 +28,38 @@ def estimar_periodo(t, theta):
     periodo_estimado = np.mean(diferencias)
     return periodo_estimado
 
+def GetMaxs(lista: list):
+    """
+    Devuelve una lista de índices donde la señal cambia de dirección (decreciente a creciente o viceversa).
+    Detecta los puntos donde la derivada cambia de signo.
+    """
+    arr = np.array(lista)
+    derivada = np.diff(arr)
+    cambios = np.where(np.diff(np.sign(derivada)) != 0)[0] + 1
+    return cambios.tolist()
+
 
 def GetFrecuencia(Datos: dict):
     """
     Calcula la frecuencia del péndulo a partir de los datos de 'theta' y 'T'.
-    Utiliza los cruces por el valor inicial de theta para estimar el período y la frecuencia.
+    Utiliza los máximos locales de theta para estimar el período y la frecuencia.
     """
-
     theta = np.array(Datos["theta"])
     T = np.array(Datos["T"])
 
-    # Valor inicial de theta
-    theta0 = theta[0]
+    # Obtener los índices de los máximos locales usando GetMaxs
+    idx_maximos = GetMaxs(theta)
 
-    # Buscar los índices donde theta cruza por theta0 (cambio de signo respecto a theta0)
-    cruces = np.where(np.diff(np.sign(theta - theta0)))[0]
-
-    # Necesitamos al menos dos cruces para calcular un período
-    if len(cruces) < 2:
-        print("No se detectaron suficientes cruces por el valor inicial para calcular la frecuencia.")
+    # Necesitamos al menos dos máximos para calcular un período
+    if len(idx_maximos) < 2:
+        print("No se detectaron suficientes máximos para calcular la frecuencia.")
         return None
 
-    # Calcular los tiempos de cruce por theta0
-    tiempos_cruce = T[cruces]
+    # Tiempos en los que ocurren los máximos
+    tiempos_maximos = T[idx_maximos]
 
-    # Calcular los períodos entre cruces alternos (un ciclo completo)
-    periodos = np.diff(tiempos_cruce[::2])
+    # Calcular los períodos entre máximos consecutivos
+    periodos = np.diff(tiempos_maximos)
 
     if len(periodos) == 0:
         print("No se detectaron períodos completos.")

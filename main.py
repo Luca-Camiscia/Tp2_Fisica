@@ -225,9 +225,9 @@ def Plot_theta_vs_t_con_armonica():
 def main():
     lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
     #graficar_comparativo_ordenado(lista)
-    #Plot_frecuencias()
-    #Plot_frecuencia_vs_M()
-    Plot_comparativo_ordenado(lista)
+    Plot_frecuencias()
+    Plot_frecuencia_vs_M()
+    #Plot_comparativo_ordenado(lista)
     #Plot_theta_vs_t_con_armonica()
 
     
