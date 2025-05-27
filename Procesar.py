@@ -6,6 +6,28 @@ def infoGet(id: str):
         data = json.load(f)
     return data.get(id)
 
+from scipy.signal import find_peaks
+import numpy as np
+
+def estimar_periodo(t, theta):
+    # Buscar máximos locales
+    peaks, _ = find_peaks(theta)
+    
+    # Si hay menos de 2 picos no se puede estimar
+    if len(peaks) < 2:
+        return None
+    
+    # Tiempos en los que ocurren los picos
+    tiempos_picos = t[peaks]
+    
+    # Diferencias entre tiempos de picos consecutivos
+    diferencias = np.diff(tiempos_picos)
+    
+    # Promedio de diferencias → período estimado
+    periodo_estimado = np.mean(diferencias)
+    return periodo_estimado
+
+
 def GetFrecuencia(Datos: dict):
     """
     Calcula la frecuencia del péndulo a partir de los datos de 'theta' y 'T'.

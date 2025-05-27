@@ -1,4 +1,4 @@
-from Procesar import process,graph, GetFrecuencia, infoGet
+from Procesar import process,graph, GetFrecuencia, infoGet, estimar_periodo
 from matplotlib.lines import Line2D
 import numpy as np
 import math
@@ -121,7 +121,7 @@ def Plot_comparativo_ordenado(lista_ids):
     columnas = 3
     filas = math.ceil(n / columnas)
 
-    fig, axs = plt.subplots(filas, columnas, figsize=(4.5 * columnas, 3 * filas), sharex=True, sharey=True)
+    fig, axs = plt.subplots(filas, columnas, figsize=(4 * columnas, 3 * filas), sharex=False, sharey=False)
 
     if filas == 1:
         axs = [axs]
@@ -137,23 +137,48 @@ def Plot_comparativo_ordenado(lista_ids):
         for osc in ["chica", "mediana", "grande"]:
             if osc in subdatos:
                 d = subdatos[osc]
-                theta0 = round(d["theta"][0], 2)
-                ax.plot(d["T"], d["theta"], label=f"θ₀ = {theta0} rad")
+                t = np.array(d["T"])
+                theta = np.array(d["theta"])
+                
+               # periodo = estimar_periodo(t, theta)
+                #if periodo is None:
+                    #continue  # saltar si no se puede estimar el período
+
+               # T_max = 4 * periodo
+                #mask = t <= T_max
+               # t_cortado = t[mask]
+                #theta_cortado = theta[mask]
+                 # Recortar a los primeros T_max segundos
+                T_max = 5
+                mask = t <= T_max
+                t = t[mask]
+                theta = theta[mask]
+
+                theta0 = round(theta[0], 2)
+                ax.plot(t, theta, label=f"θ₀ = {theta0}")
+                ax.legend(loc='lower right', fontsize=4)
+                
 
         peso, largo = key
-        ax.set_title(f"Peso: {peso}g, Largo: {largo}cm", fontsize=10)
+        ax.set_title(f"Peso: {peso}g, Largo: {largo}cm", fontsize=8)
         ax.set_xlabel("t [s]")
         ax.set_ylabel("θ [rad]")
-        ax.set_xticks(np.arange(0, 8, 1))  # eje x de 0 a 7 s
+        ax.set_xticks(np.arange(0, 6, 1))  # eje x de 0 a 7 s
         ax.grid(True)
         ax.legend(fontsize=8)
+
+        # Ajuste del eje Y en base al valor máximo de theta
+        if len(theta) > 0:
+            max_theta = np.max(np.abs(theta))
+            ax.set_ylim(-max_theta * 1.1, max_theta * 1.1)
 
     # Eliminar subplots vacíos
     for j in range(i + 1, filas * columnas):
         fig.delaxes(axs[j // columnas, j % columnas])
 
+    
     plt.tight_layout()
-    plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=14, y=1.02)
+    plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=9, y=1)
     plt.show()
 
 def Plot_theta_vs_t_con_armonica():
@@ -164,7 +189,7 @@ def Plot_theta_vs_t_con_armonica():
     import matplotlib.pyplot as plt
     import numpy as np
 
-    ids = {"chica": 5932, "grande": 5930} #ESTO HAY QUE REVISAR QUE SEA EL MÄS MÄS CHICO Y EL MÄS MÄS GRANDE
+    ids = {"chica": 5941, "grande": 5939} #ESTO HAY QUE REVISAR QUE SEA EL MÄS MÄS CHICO Y EL MÄS MÄS GRANDE
     g = 9.81  # m/s²
 
     for tipo, vid in ids.items():
@@ -172,7 +197,7 @@ def Plot_theta_vs_t_con_armonica():
         T = np.array(datos["T"])
         theta = np.array(datos["theta"])
         A = theta[0]
-        A_deg = np.rad2deg(A)
+        #A_deg = np.rad2deg(A)
         L_cm = datos["Largo"]
         L = L_cm / 100  # convertir a metros
         omega_teorica = np.sqrt(g / L)
@@ -189,7 +214,7 @@ def Plot_theta_vs_t_con_armonica():
         plt.plot(T, theta_armonica, '--', color='orange', label=r"$\theta$ armónica (pequeñas oscilaciones)")
         plt.xlabel("t [s]")
         plt.ylabel(r"$\theta$ [rad]")
-        plt.title(f"Comparación entre solución exacta y armónica\nAmplitud inicial: {A_deg:.1f}°") #DAN RARO LOS ANGULOS
+        plt.title(f"Comparación entre solución exacta y armónica\nAmplitud inicial: {A:.1f}°") #DAN RARO LOS ANGULOS
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
@@ -202,8 +227,8 @@ def main():
     #graficar_comparativo_ordenado(lista)
     #Plot_frecuencias()
     #Plot_frecuencia_vs_M()
-    #Plot_comparativo_ordenado()
-    Plot_theta_vs_t_con_armonica()
+    Plot_comparativo_ordenado(lista)
+    #Plot_theta_vs_t_con_armonica()
 
     
 #     res = process(5939)
