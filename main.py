@@ -1,4 +1,4 @@
-from Procesar import process,graph, GetFrecuencia, infoGet, estimar_periodo
+from Procesar import process,graph, GetFrecuencia, infoGet, estimar_periodo, GetMaxlib
 from matplotlib.lines import Line2D
 import numpy as np
 import math
@@ -243,23 +243,16 @@ def Plot_theta_vs_t_con_armonica():
 
 def main():
     lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
-<<<<<<< HEAD
-    
+    #graficar_comparativo_ordenado(lista)
     Plot_frecuencias()
     Plot_frecuencia_vs_M()
-    # Plot_comparativo_ordenado(lista)
-=======
-    #graficar_comparativo_ordenado(lista)
-    #Plot_frecuencias()
-    #Plot_frecuencia_vs_M()
     Plot_comparativo_ordenado(lista)
->>>>>>> 7afaaefc326ec6e9022959af3b9f2637ae34fd37
-    #Plot_theta_vs_t_con_armonica()
+    Plot_theta_vs_t_con_armonica()
 
     
-    #res = process(5926)
+    # res = process(5926)
+    # graph(res,"theta")
 
-    #graph(res,"theta")
 
 #     print(GetFrecuencia(res))
 main()

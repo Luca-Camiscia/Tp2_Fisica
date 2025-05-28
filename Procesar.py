@@ -57,6 +57,14 @@ def GetFrecuencia(Datos: dict):
     # Tiempos en los que ocurren los máximos
     tiempos_maximos = T[idx_maximos]
 
+    # CORRECCION: Eliminar tiempos muy cercanos (por ejemplo, menos de 0.05s de diferencia)
+    min_dist = 0.7  # Puedes ajustar este parámetro según tu caso
+    tiempos_filtrados = [tiempos_maximos[0]]
+    for t in tiempos_maximos[1:]:
+        if t - tiempos_filtrados[-1] >= min_dist:
+            tiempos_filtrados.append(t)
+    tiempos_maximos = np.array(tiempos_filtrados)
+
     # Calcular los períodos entre máximos consecutivos
     periodos = np.diff(tiempos_maximos)
 
