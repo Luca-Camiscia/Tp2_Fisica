@@ -28,15 +28,13 @@ def estimar_periodo(t, theta):
     periodo_estimado = np.mean(diferencias)
     return periodo_estimado
 
-def GetMaxs(lista: list):
+def GetMaxlib(lista: list):
     """
-    Devuelve una lista de índices donde la señal cambia de dirección (decreciente a creciente o viceversa).
-    Detecta los puntos donde la derivada cambia de signo.
+    Devuelve una lista de índices de los máximos locales usando scipy.signal.find_peaks.
     """
     arr = np.array(lista)
-    derivada = np.diff(arr)
-    cambios = np.where(np.diff(np.sign(derivada)) != 0)[0] + 1
-    return cambios.tolist()
+    peaks, _ = find_peaks(arr)
+    return peaks.tolist()
 
 
 def GetFrecuencia(Datos: dict):
@@ -48,7 +46,8 @@ def GetFrecuencia(Datos: dict):
     T = np.array(Datos["T"])
 
     # Obtener los índices de los máximos locales usando GetMaxs
-    idx_maximos = GetMaxs(theta)
+    #idx_maximos = GetMaxs(theta)
+    idx_maximos = GetMaxlib(theta)
 
     # Necesitamos al menos dos máximos para calcular un período
     if len(idx_maximos) < 2:

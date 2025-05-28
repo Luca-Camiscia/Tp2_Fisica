@@ -7,6 +7,7 @@ def Plot_frecuencias():
     """
     Grafica las frecuencias de las 15 grabaciones como un scatter plot, usando la longitud (Largo) en el eje x.
     Colorea según el valor de infoGet()["Oscilacion"].
+    Agrega barras de error en las longitudes de 0.1 cm.
     """
     # IDs de los videos a procesar
     lista_videos = [5924, 5925, 5926, 5933, 5934, 5936, 5939, 5940, 5941, 5942, 5943, 5944, 5946, 5947, 5948]
@@ -31,8 +32,11 @@ def Plot_frecuencias():
         longitudes.append(largo)
         etiquetas.append(f"{video_id}")
 
-    fig, ax = plt.subplots(figsize=(10, 6))
-    ax.scatter(longitudes, frecuencias, color=colores, s=80)
+    _, ax = plt.subplots(figsize=(10, 6))
+    # Agregar barras de error en x (longitud) de 0.1 cm
+    ax.errorbar(longitudes, frecuencias, xerr=0.1, fmt='o', color='black', ecolor="#FF0000", elinewidth=2, capsize=5, alpha=0.8, zorder=2)
+    # Dibujar los puntos encima con sus colores
+    ax.scatter(longitudes, frecuencias, color=colores, s=10, zorder=3)
 
     ax.set_xticks(sorted(set(longitudes)))
     ax.set_xticklabels(sorted(set(longitudes)))
@@ -55,6 +59,7 @@ def Plot_frecuencia_vs_M():
     """
     Grafica la frecuencia en función de la masa para L = 35 cm.
     El eje x es la masa (g), el eje y la frecuencia (Hz), y el color depende de la oscilación.
+    Agrega barras de error en la masa de 0.1g.
     """
     # IDs de videos con L = 35 cm
     Masas = [5924, 5925, 5926, 5921, 5922, 5923, 5917, 5918, 5920]
@@ -77,7 +82,10 @@ def Plot_frecuencia_vs_M():
         colores.append(color)
 
     fig, ax = plt.subplots(figsize=(8, 5))
-    ax.scatter(masas_x, frecuencias_y, color=colores, s=80)
+    # Agregar barras de error en x (masa) de 0.1g
+    ax.errorbar(masas_x, frecuencias_y, xerr=0.1, fmt='o', color='black', ecolor="#FF0000", elinewidth=2, capsize=5, alpha=0.8, zorder=2)
+    # Dibujar los puntos encima con sus colores
+    ax.scatter(masas_x, frecuencias_y, color=colores, s=10, zorder=3)
 
     ax.set_xlabel("Masa (g)")
     ax.set_ylabel("Frecuencia (Hz)")
@@ -93,8 +101,6 @@ def Plot_frecuencia_vs_M():
 
     plt.tight_layout()
     plt.show()
-
-
 
 
 
@@ -224,16 +230,16 @@ def Plot_theta_vs_t_con_armonica():
 
 def main():
     lista = [5917, 5918, 5920, 5921, 5922, 5923, 5924, 5925, 5926, 5927, 5928, 5929, 5930, 5931, 5932, 5933, 5934, 5936]
-    #graficar_comparativo_ordenado(lista)
+    
     Plot_frecuencias()
     Plot_frecuencia_vs_M()
-    #Plot_comparativo_ordenado(lista)
+    # Plot_comparativo_ordenado(lista)
     #Plot_theta_vs_t_con_armonica()
 
     
-#     res = process(5939)
+    #res = process(5926)
 
-#     graph(res,"ALL")
+    #graph(res,"theta")
 
 #     print(GetFrecuencia(res))
 main()
