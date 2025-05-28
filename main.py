@@ -3,6 +3,7 @@ from matplotlib.lines import Line2D
 import numpy as np
 import math
 import matplotlib.pyplot as plt
+from scipy.signal import find_peaks
 def Plot_frecuencias():
     """
     Grafica las frecuencias de las 15 grabaciones como un scatter plot, usando la longitud (Largo) en el eje x.
@@ -156,7 +157,19 @@ def Plot_comparativo_ordenado(lista_ids):
 
                 theta0 = round(theta[0], 2)
                 ax.plot(t, theta, label=f"θ₀ = {theta0}°")
-                
+
+                # ✅ Solo para oscilación mediana: marcar el período con una flecha
+                if osc == "mediana":
+                    # Detectar picos
+                    peaks, _ = find_peaks(theta, height=0)
+                    if len(peaks) >= 2:
+                        t1, t2 = t[peaks[0]], t[peaks[1]]
+                        y1 = theta[peaks[0]]
+                        ax.annotate('', xy=(t2, y1), xytext=(t1, y1),
+                                    arrowprops=dict(arrowstyle='<->', color='red'))
+                        ax.text((t1 + t2) / 2, y1 + 0.05, 'T', color='red', fontsize=8,
+                                ha='center')
+                    
                 
 
         peso, largo = key
