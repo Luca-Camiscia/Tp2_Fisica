@@ -43,7 +43,7 @@ def Plot_frecuencias():
     ax.set_xticklabels(sorted(set(longitudes)))
     ax.set_ylabel("Frecuencia (Hz)")
     ax.set_xlabel("Longitud (cm)")
-    ax.set_title("Frecuencias vs Longitud de las 15 grabaciones (masa 6g)")
+   # ax.set_title("Frecuencias vs Longitud de las 15 grabaciones (masa 6g)")
 
     # Leyenda personalizada
     legend_elements = [
@@ -90,7 +90,7 @@ def Plot_frecuencia_vs_M():
 
     ax.set_xlabel("Masa (g)")
     ax.set_ylabel("Frecuencia (Hz)")
-    ax.set_title("Frecuencia vs Masa para L = 35 cm")
+   # ax.set_title("Frecuencia vs Masa para L = 35 cm")
 
     # Leyenda personalizada
     legend_elements = [
@@ -162,9 +162,10 @@ def Plot_comparativo_ordenado(lista_ids):
                 theta = theta[mask]
 
                 theta0 = round(theta[0], 2)
-                ax.plot(t, theta, label=f"θ₀ = {theta0}°")
+                ax.plot(t, theta, marker='o', linestyle='-', markersize=2, label=f"θ₀ = {theta0}°")
 
-                # ✅ Solo para oscilación mediana: marcar el período con una flecha
+
+                #  Solo para oscilación mediana: marcar el período con una flecha
                 if osc == "mediana":
                     # Detectar picos
                     peaks, _ = find_peaks(theta, height=0)
@@ -197,7 +198,7 @@ def Plot_comparativo_ordenado(lista_ids):
 
     
     plt.tight_layout()
-    plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=9, y=1)
+   # plt.suptitle("Comparación de θ(t) con distintas amplitudes iniciales", fontsize=9, y=1)
     plt.show()
 
 def Plot_theta_vs_t_con_armonica():
@@ -229,11 +230,11 @@ def Plot_theta_vs_t_con_armonica():
         theta_armonica = A * np.cos(omega_teorica * T + phi)
 
         plt.figure(figsize=(8, 4))
-        plt.plot(T, theta, '-', color='blue', label=r"$\theta$ real")
-        plt.plot(T, theta_armonica, '--', color='orange', label=r"$\theta$ armónica (pequeñas oscilaciones)")
+        plt.plot(T, theta, linestyle='-', marker='o', markersize=3, color='blue', label=r"$\theta$ real")
+        plt.plot(T, theta_armonica, linestyle='--', color='orange', label=r"$\theta$ armónica (pequeñas oscilaciones)")
         plt.xlabel("t [s]")
         plt.ylabel(r"$\theta$ [rad]")
-        plt.title(f"Comparación entre solución exacta y armónica\nAmplitud inicial: {A:.1f}°") #DAN RARO LOS ANGULOS
+       # plt.title(f"Comparación entre solución exacta y armónica\nAmplitud inicial: {A:.1f}°") #DAN RARO LOS ANGULOS
         plt.legend()
         plt.grid(True)
         plt.tight_layout()
